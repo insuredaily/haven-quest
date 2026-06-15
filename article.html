@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HavenQuest - Real Estate & Property Insights</title>
+    <meta name="description" content="Your premium news desk for luxury real estate trends, mortgage market analyses, home valuation guides, and property investment portfolios.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Lora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Top Header & Brand Bar -->
+    <header id="site-header">
+        <div class="header-container">
+            <div id="brand-logo" class="logo">
+                <i class="fa-solid fa-house-chimney-window"></i>
+                <span>HavenQuest</span>
+            </div>
+            
+            <nav id="main-nav">
+                <div class="nav-links">
+                    <a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="#" id="bookmark-nav"><i class="fa-solid fa-bookmark"></i> Bookmarks (<span id="bookmark-count">0</span>)</a>
+                    <a href="#" id="rss-nav"><i class="fa-solid fa-rss"></i> RSS Feeds</a>
+                </div>
+            </nav>
+
+            <div class="header-actions">
+                <button id="theme-toggle" aria-label="Toggle dark/light theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- News Ticker -->
+    <div id="news-ticker">
+        <div class="ticker-label">LIVE UPDATE</div>
+        <div class="ticker-track">
+            <div class="ticker-content" id="ticker-content-list">
+                <!-- Ticker items dynamically written -->
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <!-- Main Columns Grid -->
+        <div class="feed-layout">
+            <!-- Left Column (Swaps between News Feed and Article Detail View) -->
+            <section class="news-column">
+                
+                <!-- 1. Feed View (Visible by default) -->
+                <div id="feed-view">
+                    <!-- Hero Section -->
+                    <section id="hero-banner" class="hero">
+                        <div class="hero-image" style="background-image: url('assets/hero.png');">
+                            <div class="hero-overlay"></div>
+                        </div>
+                        <div class="hero-details">
+                            <span class="hero-badge">FEATURED INTELLIGENCE</span>
+                            <h1 id="hero-title">Loading Featured Intelligence...</h1>
+                            <p id="hero-excerpt">Our editors are compiling the latest datasets. Please stand by.</p>
+                            <div class="hero-meta">
+                                <span id="hero-author"><i class="fa-solid fa-user"></i> Staff Writer</span>
+                                <span id="hero-time"><i class="fa-solid fa-clock"></i> 5 min read</span>
+                            </div>
+                            <button class="hero-btn" id="hero-read-btn">Read Premium Case Study</button>
+                        </div>
+                    </section>
+
+                    <div class="filter-bar">
+                        <div class="categories-tabs" id="category-tabs-container">
+                            <button class="tab-btn active" data-category="all">All News</button>
+                            <!-- Dynamic Categories -->
+                        </div>
+                        <div class="search-sort-controls">
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="news-search" placeholder="Search articles...">
+                            </div>
+                            <select id="news-sort">
+                                <option value="newest">Newest First</option>
+                                <option value="trending">Most Popular</option>
+                                <option value="bookmarks">Saved Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- RSS Feed Load Status -->
+                    <div id="rss-status-bar" class="rss-status" style="display: none;">
+                        <div class="rss-status-message">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Fetching active RSS feed from <strong><span id="rss-source-name">Feed</span></strong>...
+                        </div>
+                        <button id="cancel-rss-btn" class="mini-btn">Back to Simulated Feed</button>
+                    </div>
+
+                    <!-- Feed Container -->
+                    <div id="news-feed-container" class="news-feed">
+                        <!-- News articles list -->
+                    </div>
+                </div>
+
+                <!-- 2. Article Detail View (Hidden by default) -->
+                <div id="article-detail-view" style="display: none;">
+                    <div class="detail-card" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 30px; box-shadow: var(--box-shadow); transition: border-color var(--transition-speed); position: relative; overflow: hidden;">
+                        <div id="site-scroll-progress" class="scroll-progress-container" style="display: none; position: absolute; top: 0; left: 0; right: 0; height: 4px; margin: 0; border-radius: 0;">
+                            <div id="scroll-progress-bar" class="scroll-progress-fill" style="width: 0%; height: 100%; background-color: var(--primary);"></div>
+                        </div>
+                        <button id="detail-back-btn" class="back-btn" style="background: none; border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px; transition: background-color var(--transition-speed);"><i class="fa-solid fa-arrow-left"></i> Back to Feed</button>
+                        
+                        <div class="detail-header">
+                            <span class="detail-badge" id="detail-category" style="display: inline-block; background-color: rgba(var(--primary-rgb), 0.1); color: var(--primary); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">CATEGORY</span>
+                            <h2 id="detail-title" style="font-size: 28px; margin-top: 15px; margin-bottom: 15px; font-family: var(--font-heading);">Article Title</h2>
+                            <div class="detail-meta" style="display: flex; gap: 20px; color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                                <span><i class="fa-solid fa-user"></i> <span id="detail-author">Author</span></span>
+                                <span><i class="fa-solid fa-clock"></i> <span id="detail-read-time">5 min read</span></span>
+                                <span><i class="fa-solid fa-calendar"></i> <span id="detail-date">Date</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-body" id="detail-body-content" style="font-size: 16px; line-height: 1.8; color: var(--text-color); margin-bottom: 30px;">
+                            <!-- Article content -->
+                        </div>
+                        
+                        <!-- Actions Footer -->
+                        <div class="detail-actions-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 20px 0; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+                            <button class="action-btn" id="detail-upvote-btn">
+                                <i class="fa-solid fa-thumbs-up"></i> Upvote (<span id="detail-upvote-count">0</span>)
+                            </button>
+                            <button class="action-btn" id="detail-bookmark-btn">
+                                <i class="fa-solid fa-bookmark"></i> Bookmark
+                            </button>
+                            <div class="detail-shares" style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted);">
+                                <span>Share:</span>
+                                <a href="#" class="share-link twitter" onclick="alert('Shared to Twitter!'); return false;"><i class="fa-brands fa-twitter"></i></a>
+                                <a href="#" class="share-link linkedin" onclick="alert('Shared to LinkedIn!'); return false;"><i class="fa-brands fa-linkedin"></i></a>
+                                <a href="#" class="share-link link" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied!'); return false;"><i class="fa-solid fa-link"></i></a>
+                            </div>
+                        </div>
+
+                        <!-- Related Articles Section -->
+                        <div class="detail-related-section" style="margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 30px;">
+                            <h3 style="font-size: 18px; margin-bottom: 15px; font-family: var(--font-heading); font-weight: 700; color: var(--text-color);">Related Articles</h3>
+                            <div id="detail-related-list" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Dynamic related articles -->
+                            </div>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div class="detail-comments-section">
+                            <h3 style="font-size: 18px; margin-bottom: 15px;">Discussion (<span id="detail-comments-count">0</span>)</h3>
+                            <div class="comment-list" id="detail-comments-list" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;"></div>
+                            <form id="detail-comment-form" class="comment-input-form" onsubmit="return false;">
+                                <textarea id="detail-comment-text" placeholder="Add to the discussion... (Be constructive)" required style="width: 100%; padding: 12px; border-radius: var(--border-radius); border: 1px solid var(--border-color); min-height: 80px; outline: none; margin-bottom: 10px; background-color: var(--bg-color); color: var(--text-color);"></textarea>
+                                <button type="submit" id="detail-comment-submit" style="background-color: var(--primary); color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Post Comment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sidebar Widgets Column (Permanently visible alongside both feed list and detail views!) -->
+            <aside class="sidebar-column">
+                <!-- Ad Spot 1 -->
+                <div class="ad-unit glow-card" id="ad-unit-1">
+                    <div class="ad-badge">SPONSORED PROMOTION</div>
+                    <div class="ad-content">
+                        <h4>Mortgage Refinance Tool</h4>
+                        <p>Lower your monthly payments. Refinance while interest rates are low. Get free estimates.</p>
+                        <button class="ad-cta-btn">Compare Rates <i class="fa-solid fa-arrow-right-long"></i></button>
+                    </div>
+                </div>
+
+                <!-- Interactive Niche Widget -->
+                <div class="sidebar-widget interactive-widget">
+                    <div class="widget-header">
+                        <i class="fa-solid fa-gears"></i>
+                        <h3>Mortgage Payment Estimator</h3>
+                    </div>
+                    <div class="widget-body">
+                        <p class="widget-desc">Calculate a monthly principal and interest payment estimate based on home cost and interest.</p>
+                        <form id="widget-calc-form" onsubmit="return false;">
+                            
+            <div class="calc-group">
+                <label for="home-price">Home Purchase Price ($)</label>
+                <input type="number" id="home-price" min="10000" value="450000">
+            </div>
+            <div class="calc-group">
+                <label for="down-payment">Down Payment ($)</label>
+                <input type="number" id="down-payment" min="0" value="90000">
+            </div>
+            <div class="calc-group">
+                <label for="mort-rate">Interest Rate (%)</label>
+                <input type="number" id="mort-rate" min="0.5" max="15" step="0.01" value="6.2">
+            </div>
+            <div class="calc-group">
+                <label for="loan-term">Loan Term (Years)</label>
+                <select id="loan-term">
+                    <option value="30">30-Year Fixed</option>
+                    <option value="15">15-Year Fixed</option>
+                </select>
+            </div>
+            <button class="calc-btn" id="run-calc">Calculate Payment</button>
+        
+                        </form>
+                        <div id="calc-results" class="calc-results"></div>
+                    </div>
+                </div>
+
+                <!-- Ad Spot 2 -->
+                <div class="ad-unit" id="ad-unit-2">
+                    <div class="ad-badge">SPONSORED PROMOTION</div>
+                    <div class="ad-content">
+                        <h4>Find Verified Realtors</h4>
+                        <p>Connect with top-performing realtors in your zip code. Buy or sell your home with confidence.</p>
+                        <button class="ad-cta-btn secondary-ad-btn">Find Realtor</button>
+                    </div>
+                </div>
+
+                <!-- Live RSS Feeds Panel -->
+                <div class="sidebar-widget rss-sources-widget">
+                    <div class="widget-header">
+                        <i class="fa-solid fa-rss"></i>
+                        <h3>Live RSS Aggregation</h3>
+                    </div>
+                    <div class="widget-body">
+                        <p class="widget-desc">Fetch and parse real-time industry articles directly into this workspace.</p>
+                        <div class="rss-source-buttons">
+                            <button class="rss-load-btn" data-url="https://www.realtor.com/news/feed/" data-name="Realtor.com Real Estate News">
+                                <i class="fa-solid fa-cloud-arrow-down"></i> Load Realtor.com Real Estate News
+                            </button>
+                            <div class="custom-rss-input">
+                                <input type="url" id="custom-rss-url" placeholder="https://example.com/rss.xml">
+                                <button id="load-custom-rss">Load</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Newsletter Subscription -->
+                <div class="sidebar-widget newsletter-widget">
+                    <div class="widget-header">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                        <h3>Intel Briefing Signup</h3>
+                    </div>
+                    <div class="widget-body" id="newsletter-form-container">
+                        <p class="widget-desc">Join 18,400+ professionals. Delivered twice weekly. Zero spam.</p>
+                        <form id="newsletter-form" onsubmit="return false;">
+                            <input type="email" id="news-email" placeholder="Enter your business email" required>
+                            <button type="submit" id="newsletter-submit">Subscribe Now</button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="site-footer">
+        <div class="footer-container">
+            <div class="footer-branding">
+                <div class="logo">
+                    <i class="fa-solid fa-house-chimney-window"></i>
+                    <span>HavenQuest</span>
+                </div>
+                <p>High-performance niche news indexing and analytics workspace.</p>
+            </div>
+            <div class="footer-links">
+                <h5>Information</h5>
+                <a href="about.html">About Us</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms & Conditions</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 HavenQuest. Designed for optimized ad yield. Simulated demonstration project.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>
