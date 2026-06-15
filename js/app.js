@@ -803,9 +803,9 @@ function fetchRSSFeed(url, name, isAutoLoad = false) {
     
     statusBar.style.display = 'flex';
     sourceLabel.innerText = name;
-    statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Fetching active RSS feed from <strong>${name}</strong>...`;
+    statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Fetching active RSS feed from <strong>\${name}</strong>...`;
     
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=\${encodeURIComponent(url)}`;
     
     fetch(proxyUrl)
         .then(response => {
@@ -823,31 +823,81 @@ function fetchRSSFeed(url, name, isAutoLoad = false) {
                 
                 const title = el.querySelector("title")?.textContent || "Untitled Aggregate Article";
                 const link = el.querySelector("link")?.textContent || "#";
-                
-                let description = el.querySelector("description")?.textContent || "No summary provided by the aggregator feed.";
-                description = description.replace(/<[^>]*>/g, '').substring(0, 160) + '...';
-                
                 const pubDate = el.querySelector("pubDate")?.textContent || "Recently";
                 
-                // Dynamically calculate read time based on word count
-                const wordCount = description.split(/\s+/).filter(w => w.length > 0).length;
+                // Attempt to retrieve full content:encoded or full description
+                let fullContent = "";
+                let contentEncoded = "";
+                
+                // Try namespace content:encoded first (handles different XML namespaces)
+                if (el.getElementsByTagNameNS) {
+                    contentEncoded = el.getElementsByTagNameNS("http://purl.org/rss/1.0/modules/content/", "encoded")[0]?.textContent || "";
+                }
+                if (!contentEncoded) {
+                    // Try direct selector for encoded
+                    contentEncoded = el.querySelector("encoded")?.textContent || el.querySelector("content\\:encoded")?.textContent || "";
+                }
+                if (!contentEncoded) {
+                    // Try looking in childNodes directly by name
+                    const encodedNode = Array.from(el.childNodes).find(node => node.localName === "encoded" || node.nodeName === "content:encoded");
+                    if (encodedNode) {
+                        contentEncoded = encodedNode.textContent;
+                    }
+                }
+                
+                let rawDescription = el.querySelector("description")?.textContent || "";
+                fullContent = contentEncoded || rawDescription || "No summary or content available for this feed article.";
+                
+                // Excerpt (always 160 chars, stripped of HTML, for list views)
+                let cleanDescription = rawDescription.replace(/<[^>]*>/g, '').trim();
+                if (!cleanDescription && contentEncoded) {
+                    cleanDescription = contentEncoded.replace(/<[^>]*>/g, '').trim();
+                }
+                let excerpt = cleanDescription.substring(0, 160);
+                if (cleanDescription.length > 160) excerpt += '...';
+                if (!excerpt) excerpt = "No summary provided by the aggregator feed.";
+                
+                // Dynamically calculate read time based on word count of fullContent
+                const wordCount = fullContent.replace(/<[^>]*>/g, '').split(/\\s+/).filter(w => w.length > 0).length;
                 const readTimeMin = Math.max(1, Math.ceil(wordCount / 180));
-                const dynamicReadTime = `${readTimeMin} min read`;
+                const dynamicReadTime = `\${readTimeMin} min read`;
                 
                 parsedArticles.push({
                     title: title,
-                    excerpt: description,
+                    excerpt: excerpt,
                     category: 'Live Feed',
                     author: name.split(' ')[0] + ' RSS',
                     date: parseDateAgo(pubDate),
                     readTime: dynamicReadTime,
-                    body: `<p>${description}</p><p>This article is aggregated from an active RSS resource. You can view the original article structure on the publisher's site.</p><a href="${link}" target="_blank" class="hero-btn" style="display:inline-block; margin-top:10px;">Read Original Source <i class="fa-solid fa-external-link"></i></a>`
+                    body: `<style>
+.rss-full-content {
+    line-height: 1.7;
+    font-size: 1.1rem;
+    color: var(--text-color, #333);
+}
+.rss-full-content p {
+    margin-bottom: 1.25rem;
+}
+.rss-full-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+.rss-full-content a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+</style>
+<div class="rss-full-content">\${fullContent}</div>
+<p style="margin-top:20px; font-style:italic;">This article was aggregated from an active RSS resource. You can read the original article on the publisher's site.</p>
+<a href="\${link}" target="_blank" class="hero-btn" style="display:inline-block; margin-top:10px;">Read Original Source <i class="fa-solid fa-external-link"></i></a>`
                 });
             });
             
             state.currentArticles = parsedArticles;
             localStorage.setItem('6_haven_quest_rss_articles', JSON.stringify(parsedArticles));
-            statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> Loaded <strong>${parsedArticles.length}</strong> live articles from <strong>${name}</strong>.`;
+            statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> Loaded <strong>\${parsedArticles.length}</strong> live articles from <strong>\${name}</strong>.`;
             renderFeed();
             if (!isAutoLoad) incrementAnalytics(20, 3.50);
             
