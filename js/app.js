@@ -803,9 +803,9 @@ function fetchRSSFeed(url, name, isAutoLoad = false) {
     
     statusBar.style.display = 'flex';
     sourceLabel.innerText = name;
-    statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Fetching active RSS feed from <strong>\${name}</strong>...`;
+    statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Fetching active RSS feed from <strong>${name}</strong>...`;
     
-    const proxyUrl = `https://api.allorigins.win/raw?url=\${encodeURIComponent(url)}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
     
     fetch(proxyUrl)
         .then(response => {
@@ -860,7 +860,7 @@ function fetchRSSFeed(url, name, isAutoLoad = false) {
                 // Dynamically calculate read time based on word count of fullContent
                 const wordCount = fullContent.replace(/<[^>]*>/g, '').split(/\\s+/).filter(w => w.length > 0).length;
                 const readTimeMin = Math.max(1, Math.ceil(wordCount / 180));
-                const dynamicReadTime = `\${readTimeMin} min read`;
+                const dynamicReadTime = `${readTimeMin} min read`;
                 
                 parsedArticles.push({
                     title: title,
@@ -889,15 +889,15 @@ function fetchRSSFeed(url, name, isAutoLoad = false) {
     text-decoration: underline;
 }
 </style>
-<div class="rss-full-content">\${fullContent}</div>
+<div class="rss-full-content">${fullContent}</div>
 <p style="margin-top:20px; font-style:italic;">This article was aggregated from an active RSS resource. You can read the original article on the publisher's site.</p>
-<a href="\${link}" target="_blank" class="hero-btn" style="display:inline-block; margin-top:10px;">Read Original Source <i class="fa-solid fa-external-link"></i></a>`
+<a href="${link}" target="_blank" class="hero-btn" style="display:inline-block; margin-top:10px;">Read Original Source <i class="fa-solid fa-external-link"></i></a>`
                 });
             });
             
             state.currentArticles = parsedArticles;
             localStorage.setItem('6_haven_quest_rss_articles', JSON.stringify(parsedArticles));
-            statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> Loaded <strong>\${parsedArticles.length}</strong> live articles from <strong>\${name}</strong>.`;
+            statusBar.querySelector('.rss-status-message').innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--primary);"></i> Loaded <strong>${parsedArticles.length}</strong> live articles from <strong>${name}</strong>.`;
             renderFeed();
             if (!isAutoLoad) incrementAnalytics(20, 3.50);
             
